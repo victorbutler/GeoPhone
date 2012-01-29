@@ -6,7 +6,7 @@
  *
  * LICENSE:
  *
- * Copyright 2012 Victor Butler <victor@victorbutler.info>.
+ * Copyright 2012 Victor Butler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@
  * limitations under the License.
  *
  * @package   GeoPhone
- * @author    Victor Butler <victor@victorbutler.info>
+ * @author    Victor Butler <victorbutler@gmail.com>
  * @copyright 2012 Victor Butler
  * @license   http://www.apache.org/licenses/LICENSE-2.0
- * @link      http://pear.php.net/package/Services_Twilio
+ * @link      https://github.com/victorbutler/GeoPhone
  */
 
 /**
@@ -110,12 +110,14 @@ class GeoPhoneStorage {
 	 */
 	public static function factory($force = false) {
 		if (!is_file('cache/GeoPhoneStorage.inc') || $force === true) {
-			preg_match_all('/(\d+)\|([^\r\n]+)/', file_get_contents('1.txt'), $matches);
+			$pattern_locations = (!is_file('cache/1.txt') ? file_get_contents('http://libphonenumber.googlecode.com/svn/trunk/resources/geocoding/en/1.txt') : file_get_contents('cache/1.txt'));
+			preg_match_all('/(\d+)\|([^\r\n]+)/', $pattern_locations, $matches);
 			$patterns = $matches[1];
 			$locations = $matches[2];
+			self::$_instance = new GeoPhoneStorage($patterns, $locations);
 			if (is_writable('cache')) {
-				self::$_instance = new GeoPhoneStorage($patterns, $locations);
-				$file = file_put_contents('cache/GeoPhoneStorage.inc', serialize(self::$_instance));
+				file_put_contents('cache/1.txt', $pattern_locations);
+				file_put_contents('cache/GeoPhoneStorage.inc', serialize(self::$_instance));
 			}
 		} elseif (is_file('cache/GeoPhoneStorage.inc') && !isset(self::$_instance)) {
 			self::$_instance = unserialize(file_get_contents('cache/GeoPhoneStorage.inc'));
@@ -123,3 +125,5 @@ class GeoPhoneStorage {
 		return self::$_instance;
 	}
 }
+$location = GeoPhone::find('+14089961010');
+echo $location;
