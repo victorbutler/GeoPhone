@@ -103,21 +103,28 @@ class GeoPhoneStorage {
 	static protected $_instance;
 
 	/**
-	 * Create the storage object using 1.txt
-	 * Should only be used every time you update 1.txt
+	 * Create the storage object using (libphonenumber)[http://libphonenumber.googlecode.com/svn/trunk/resources/geocoding/en/1.txt]
+	 * Creates a cache (optional) of the generated pattern/location key value object
+	 * To avoid unnecessary fetching, download the libphonenumber file (above) to cache/1.txt
 	 * @param boolean  Force creation
+	 * @param boolean  Cache fetched and generated files
 	 * @return GeoPhoneStorage
+	 * @throws GeoPhone_Exception
 	 */
-	public static function factory($force = false) {
+	public static function factory($force = false, $cache_files = true) {
 		if (!is_file('cache/GeoPhoneStorage.inc') || $force === true) {
 			$pattern_locations = (!is_file('cache/1.txt') ? file_get_contents('http://libphonenumber.googlecode.com/svn/trunk/resources/geocoding/en/1.txt') : file_get_contents('cache/1.txt'));
 			preg_match_all('/(\d+)\|([^\r\n]+)/', $pattern_locations, $matches);
 			$patterns = $matches[1];
 			$locations = $matches[2];
 			self::$_instance = new GeoPhoneStorage($patterns, $locations);
-			if (is_writable('cache')) {
-				file_put_contents('cache/1.txt', $pattern_locations);
-				file_put_contents('cache/GeoPhoneStorage.inc', serialize(self::$_instance));
+			if ($cache_files === true) {
+				if (is_writable('cache')) {
+					file_put_contents('cache/1.txt', $pattern_locations);
+					file_put_contents('cache/GeoPhoneStorage.inc', serialize(self::$_instance));
+				} else {
+					throw GeoPhone_Exception('Cache directory is not writable');
+				}
 			}
 		} elseif (is_file('cache/GeoPhoneStorage.inc') && !isset(self::$_instance)) {
 			self::$_instance = unserialize(file_get_contents('cache/GeoPhoneStorage.inc'));
@@ -125,5 +132,5 @@ class GeoPhoneStorage {
 		return self::$_instance;
 	}
 }
-$location = GeoPhone::find('+14089961010');
-echo $location;
+
+class GeoPhone_Exception extends Exception {}
