@@ -113,7 +113,7 @@ class GeoPhoneStorage {
 	 */
 	public static function factory($force = false, $cache_files = true) {
 		if (!is_file('cache/GeoPhoneStorage.inc') || $force === true) {
-			$pattern_locations = (!is_file('cache/1.txt') ? file_get_contents('http://libphonenumber.googlecode.com/svn/trunk/resources/geocoding/en/1.txt') : file_get_contents('cache/1.txt'));
+			$pattern_locations = ((!is_file('cache/1.txt') || $force === true) ? file_get_contents('http://libphonenumber.googlecode.com/svn/trunk/resources/geocoding/en/1.txt') : file_get_contents('cache/1.txt'));
 			preg_match_all('/(\d+)\|([^\r\n]+)/', $pattern_locations, $matches);
 			$patterns = $matches[1];
 			$locations = $matches[2];
