@@ -29,7 +29,7 @@
 
 /**
  * Geocoding of US phone numbers based on libphonenumber
- * http://code.google.com/p/libphonenumber/source/browse/trunk/resources/geocoding/en/1.txt
+ * https://raw.githubusercontent.com/googlei18n/libphonenumber/master/resources/geocoding/en/1.txt
  * Source uses the Apache License, Version 2.0
  * Make sure your cache directory is writable if you want to regenerate storage objects
  * Usage: $location = GeoPhone::find('+14089961010');
@@ -103,7 +103,7 @@ class GeoPhoneStorage {
 	static protected $_instance;
 
 	/**
-	 * Create the storage object using (libphonenumber)[http://libphonenumber.googlecode.com/svn/trunk/resources/geocoding/en/1.txt]
+	 * Create the storage object using (libphonenumber)[https://raw.githubusercontent.com/googlei18n/libphonenumber/master/resources/geocoding/en/1.txt]
 	 * Creates a cache (optional) of the generated pattern/location key value object
 	 * To avoid unnecessary fetching, download the libphonenumber file (above) to cache/1.txt
 	 * @param boolean  Force creation
@@ -113,7 +113,7 @@ class GeoPhoneStorage {
 	 */
 	public static function factory($force = false, $cache_files = true) {
 		if (!is_file('cache/GeoPhoneStorage.inc') || $force === true) {
-			$pattern_locations = ((!is_file('cache/1.txt') || $force === true) ? file_get_contents('http://libphonenumber.googlecode.com/svn/trunk/resources/geocoding/en/1.txt') : file_get_contents('cache/1.txt'));
+			$pattern_locations = ((!is_file('cache/1.txt') || $force === true) ? file_get_contents('https://raw.githubusercontent.com/googlei18n/libphonenumber/master/resources/geocoding/en/1.txt') : file_get_contents('cache/1.txt'));
 			preg_match_all('/(\d+)\|([^\r\n]+)/', $pattern_locations, $matches);
 			$patterns = $matches[1];
 			$locations = $matches[2];
